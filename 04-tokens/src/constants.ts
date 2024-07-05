@@ -1,0 +1,3 @@
+export const TOKEN_DECIMALS = 9;
+
+export const MINOR_UNITS_PER_TOKEN_UNIT = 10 ** TOKEN_DECIMALS;
