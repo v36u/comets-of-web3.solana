@@ -1,0 +1,17 @@
+{
+  "name": "05-nfts",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prettier": "^3.3.2"
+  },
+  "dependencies": {
+    "@metaplex-foundation/js": "^0.20.1",
+    "@solana-developers/helpers": "^2.3.0",
+    "@solana/spl-token": "^0.3.7",
+    "@solana/web3.js": "^1.73.0",
+    "dotenv": "^16.0.1",
+    "typescript": "^5.0.0"
+  }
+}
