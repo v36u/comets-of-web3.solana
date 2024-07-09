@@ -30,7 +30,6 @@ const nftData = {
   imageFile: "logo-comets.png",
 };
 
-// TODO: BONUS example data for updating an existing NFT
 const updateNftData = {
   name: "Lab 5 NFT Updated",
   symbol: "L5NU",
@@ -39,7 +38,6 @@ const updateNftData = {
   imageFile: "success.png",
 };
 
-// helper function to upload image and metadata
 async function uploadMetadata(metaplex: Metaplex, nftData: NftData) {
   console.log("🚀 Uploading metadata...");
 
@@ -78,29 +76,34 @@ async function createNft(metaplex: Metaplex, uri: string, nftData: NftData) {
   return nft;
 }
 
-// [BONUS] TODO: Implement helper function update NFT
-// async function updateNftUri(
-//   metaplex: Metaplex,
-//   uri: string,
-//   mintAddress: PublicKey,
-// ) {
-//   console.log("🚀 Updating NFT URI...");
-//   // TODO: fetch NFT data using mint address
-//   const nft = ???;
+async function updateNftUri(
+  metaplex: Metaplex,
+  uri: string,
+  mintAddress: PublicKey,
+) {
+  console.log("🚀 Updating NFT URI...");
+  const nft = await metaplex.nfts().findByMint({
+    mintAddress,
+  });
 
-//   // TODO: update the NFT metadata
-//   const { respnose } = ???;
+  const { response } = await metaplex.nfts().update({
+    nftOrSft: nft,
+    uri,
+    name: updateNftData.name,
+    symbol: updateNftData.symbol,
+    sellerFeeBasisPoints: updateNftData.sellerFeeBasisPoints,
+  });
 
-//   const link = getExplorerLink("address", nft.address.toString(), "devnet");
-//   console.log(`✅ Token Mint: ${link}`);
+  const link = getExplorerLink("address", nft.address.toString(), "devnet");
+  console.log(`✅ Token Mint: ${link}`);
 
-//   console.log(
-//     `Token Mint: https://explorer.solana.com/address/${nft.address.toString()}?cluster=devnet`,
-//   );
+  console.log(
+    `Token Mint: https://explorer.solana.com/address/${nft.address.toString()}?cluster=devnet`,
+  );
 
-//   const txLink = getExplorerLink("tx", response.signature, "devnet");
-//   console.log(`✅ Transaction: ${txLink}`);
-// }
+  const txLink = getExplorerLink("tx", response.signature, "devnet");
+  console.log(`✅ Transaction: ${txLink}`);
+}
 
 async function main() {
   // create a new connection to the cluster's API
@@ -128,12 +131,9 @@ async function main() {
   // create an NFT using the helper function and the URI from the metadata
   const nft = await createNft(metaplex, uri, nftData);
 
-  // BONUS: Update an existing NFT
-  // 1. upload updated NFT data and get the new URI for the metadata
-  // const updatedUri = await uploadMetadata(metaplex, updateNftData);
+  const updatedUri = await uploadMetadata(metaplex, updateNftData);
 
-  // 2. update the NFT using the helper function and the new URI from the metadata
-  // await updateNftUri(metaplex, updatedUri, nft.address);
+  await updateNftUri(metaplex, updatedUri, nft.address);
 }
 
 main()
@@ -145,3 +145,6 @@ main()
     console.log(error);
     process.exit(1);
   });
+
+// First: https://explorer.solana.com/address/4wuPccJguYznL38uxG3GEP4mn1s5Np9YmMREo4Dh5p4V?cluster=devnet
+// Second: https://explorer.solana.com/address/7kPCDKD5G97aMek75YUzsh4eWpwydxMMWtCjHtFbWmLm?cluster=devnet
