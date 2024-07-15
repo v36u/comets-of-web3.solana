@@ -17,7 +17,7 @@ struct Team {
 
 fn build_scores_table(results: &str) -> HashMap<&str, Team> {
     // The name of the team is the key and its associated struct is the value.
-    let mut scores = HashMap::new();
+    let mut scores: HashMap<&str, Team> = HashMap::new();
 
     for line in results.lines() {
         let mut split_iterator = line.split(',');
@@ -31,6 +31,32 @@ fn build_scores_table(results: &str) -> HashMap<&str, Team> {
         // Keep in mind that goals scored by team 1 will be the number of goals
         // conceded by team 2. Similarly, goals scored by team 2 will be the
         // number of goals conceded by team 1.
+
+        if scores.contains_key(team_1_name) {
+           scores.entry(team_1_name).and_modify(|t| {
+            t.goals_scored += team_1_score;
+            t.goals_conceded += team_2_score;
+           });
+        }
+        else {
+            scores.insert(team_1_name, Team {
+                goals_scored: team_1_score,
+                goals_conceded: team_2_score
+            });
+        }
+
+        if scores.contains_key(team_2_name) {
+            scores.entry(team_2_name).and_modify(|t| {
+             t.goals_scored += team_2_score;
+             t.goals_conceded += team_1_score;
+            });
+        }
+        else {
+            scores.insert(team_2_name, Team {
+                goals_scored: team_2_score,
+                goals_conceded: team_1_score
+            });
+        }
     }
 
     scores
