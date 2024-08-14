@@ -155,4 +155,28 @@ describe("escrow", async () => {
     assert(offerAccount.tokenMintB.equals(accounts.tokenMintB));
     assert(offerAccount.tokenBWantedAmount.eq(tokenBWantedAmount));
   }).slow(ANCHOR_SLOW_TEST_THRESHOLD);
+
+  it("Puts the tokens from the vault into Bob's account, and gives Alice Bob's tokens, when Bob takes an offer", async () => {
+    const transactionSignature = await program.methods
+      .takeOffer()
+      .accounts({ ...accounts })
+      .signers([bob])
+      .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
+
+    const bobTokenAccountBalanceAfterResponse =
+      await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
+    const bobTokenAccountBalanceAfter = new BN(
+      bobTokenAccountBalanceAfterResponse.value.amount
+    );
+    assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
+
+    const aliceTokenAccountBalanceAfterResponse =
+      await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
+    const aliceTokenAccountBalanceAfter = new BN(
+      aliceTokenAccountBalanceAfterResponse.value.amount
+    );
+    assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
+  }).slow(ANCHOR_SLOW_TEST_THRESHOLD);
 });
